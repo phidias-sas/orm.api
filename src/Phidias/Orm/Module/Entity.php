@@ -1,23 +1,23 @@
 <?php
-namespace Phidias\Orm\Api\Entity;
+namespace Phidias\Orm\Module;
 
 class Entity extends \Phidias\Db\Orm\Entity
 {
     public $id;
-    public $mysql;
+    public $name;
 
     protected static $schema = [
-        "table" => "orm_api_entities",
+        "table" => "orm_modules",
         "keys"  => ["id"],
 
         "attributes" => [
             "id" => [
-                "type"   => "varchar",
-                "length" => 64
+                "type" => "uuid"
             ],
 
-            "mysql" => [
-                "type"       => "mediumtext",
+            "name" => [
+                "type"       => "varchar",
+                "length"     => 128,
                 "acceptNull" => true,
                 "default"    => null
             ]

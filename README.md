@@ -1,3 +1,196 @@
+# ORM.api
+
+Este modulo nos permite crear entidades (agrupadas en "modulos")
+y construir endpoints para interactuar con ellas
+
+
+## Crear un modulo
+POST /orm/modules
+{
+    "id": "test1",
+    "name": "Test Module No. 1"
+}
+
+## Crear entidades
+POST /orm/modules/test1/entities
+[
+    {
+        "name": "Phidias\\Store\\Credit\\Entity",
+        "keys": ["person"],
+
+        "attributes": {
+            "person": {
+                "entity": "Phidias\\Core\\Person\\Entity"
+            },
+
+            "dateCreated": {
+                "type": "date"
+            },
+
+            "credit": {
+                "type": "decimal",
+                "unsigned": false,
+                "length": "12,2",
+                "default": 0
+            }
+        }
+    },
+
+    {
+        "name": "Phidias\\Store\\Transaction\\Entity",
+        "keys": ["id"],
+
+        "attributes": {
+            "id": {
+                "type": "uuid"
+            },
+
+            "person": {
+                "entity": "Phidias\\Store\\Credit\\Entity"
+            },
+
+            "timestamp": {
+                "type": "date"
+            },
+
+            "date": {
+                "type": "date"
+            },
+
+            "value": {
+                "type": "decimal",
+                "unsigned": false,
+                "length": "12,2"
+            },
+
+            "description": {
+                "type": "mediumtext",
+                "acceptNull": true,
+                "default": null
+            },
+
+            "itemId": {
+                "type": "tinytext",
+                "acceptNull": true,
+                "default": null
+            },
+
+            "quantity": {
+                "type": "integer",
+                "acceptNull": true,
+                "default": null
+            }
+        },
+
+        "triggers": {
+            "insert": "UPDATE {Phidias\\Store\\Credit\\Entity} SET credit = credit + NEW.value WHERE person = NEW.person;"
+        }
+    }
+]
+
+
+## Instalar el modulo (crear tablas en la base de datos para cada entidad)
+PUT /orm/modules/test1/installation
+
+## Crear un recurso de consulta
+POST /orm/modules/test1/resources
+{
+    "url": "/people/{personId}/store/credit",
+
+    "get": {
+        "dispatcher": "collection",
+        "settings": {
+            "collection": {
+                "entity": "Phidias\\Store\\Credit\\Entity",
+
+                "select": {
+                    "person": {
+                        "entity": "Phidias\\Core\\Person\\Entity",
+                        "select": {
+                            "id": true,
+                            "firstName": true,
+                            "lastName": true,
+                            "isBoy": "IF(gender,true,false)"
+                        }
+                    },
+
+                    "credit": true
+                },
+
+                "match": {
+                    "person": "${url.personId}"
+                },
+
+                "limit": 1
+            }
+        }
+    }
+}
+
+## Crear un recurso de escritura de datos
+POST /orm/modules/test1/resources
+{
+    "url": "/people/{personId}/store/transactions",
+
+    "get": {
+        "dispatcher": "collection",
+        "settings": {
+            "collection": {
+                "entity": "Phidias\\Store\\Transaction\\Entity",
+
+                "select": {
+                    "date": true,
+                    "value": true
+                },
+
+                "match": {
+                    "person": "${url.personId}"
+                }
+            }
+        }
+    },
+
+    "post": {
+        "dispatcher": "insert",
+        "settings": {
+            "entity": "Phidias\\Store\\Transaction\\Entity",
+
+            "attributes": {
+                "person": "${url.personId}",
+                "timestamp": "${now}",
+                "date": "${record.date}",
+                "value": "${record.value}",
+                "description": "${record.description}",
+                "itemId": "${record.itemId}",
+                "quantity": "${record.quantity}"
+            }
+        }
+    }
+}
+
+
+GET /people/1/store/transactions
+
+POST /people/1/store/transactions
+{
+    "date": "1536917994",
+    "value": 1000,
+    "description": "recarga $1,000.00",
+    "itemId": null,
+    "quantity": 1
+}
+
+
+
+
+
+
+
+
+
+
+#### --------------------   ESPECIFICACION ANTERIOR
+
 # Module to dynamically manage entities
 # and create functional URLs
 

@@ -1,15 +1,15 @@
 <?php
-namespace Phidias\Orm\Api\Entity\Attribute;
+namespace Phidias\Orm\Module\Entity;
 
 class Entity extends \Phidias\Db\Orm\Entity
 {
     public $id;
-    public $entity;
+    public $module;
     public $name;
-    public $mysql;
+    public $specification;
 
     protected static $schema = [
-        "table" => "orm_api_entities_attributes",
+        "table" => "orm_module_entities",
         "keys"  => ["id"],
 
         "attributes" => [
@@ -17,11 +17,10 @@ class Entity extends \Phidias\Db\Orm\Entity
                 "type" => "uuid"
             ],
 
-            "entity" => [
-                "entity"    => "Phidias\Orm\Api\Entity\Entity",
-                "attribute" => "id",
-                "onDelete"  => "CASCADE",
-                "onUpdate"  => "CASCADE"
+            "module" => [
+                "entity"   => "Phidias\Orm\Module\Entity",
+                "onDelete" => "CASCADE",
+                "onUpdate" => "CASCADE"
             ],
 
             "name" => [
@@ -31,11 +30,13 @@ class Entity extends \Phidias\Db\Orm\Entity
                 "default"    => null
             ],
 
-            "mysql" => [
-                "type"       => "mediumtext",
+            "specification" => [
+                "type"       => "text",
                 "acceptNull" => true,
                 "default"    => null
             ]
-        ]
+        ],
+
+        "unique" => ["name"]
     ];
 }
