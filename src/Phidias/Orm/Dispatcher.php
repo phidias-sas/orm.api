@@ -12,11 +12,6 @@ class Dispatcher
     public static function collection($settings, $query, $input, $request, $response)
     {
         $collection = self::toCollection($settings->collection);
-        /*
-        if ( isset($settings->allowStuffFromQuerystring )) {
-            // filter collection from queryString
-        }
-        */
 
         if (isset($settings->searchable) && isset($query->q)) {
             $collection->search($query->q, $settings->searchable);
@@ -25,6 +20,25 @@ class Dispatcher
         if (!isset($settings->collection->limit)) {
             $collection->limit(50);
         }
+
+
+        /*
+        Filter from query string
+        */
+        // if ( isset($settings->allowStuffFromQuerystring )) {
+        if (isset($query->limit)) {
+            $collection->limit($query->limit);
+        }
+
+        if (isset($query->page)) {
+            $collection->page($query->page);
+        }
+
+        if (isset($query->sort)) {
+            $collection->orderBy($query->sort, isset($query->desc) ? $query->desc : null);
+        }
+        // }
+
 
         return $collection;
     }

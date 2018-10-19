@@ -110,7 +110,7 @@ POST /orm/modules/test1/resources
                             "id": true,
                             "firstName": true,
                             "lastName": true,
-                            "isBoy": "IF(gender,true,false)"
+                            "gender": true
                         }
                     },
 
@@ -122,6 +122,18 @@ POST /orm/modules/test1/resources
                 },
 
                 "limit": 1
+            }
+        }
+    },
+
+    "put": {
+        "dispatcher": "insert",
+        "settings": {
+            "entity": "Phidias\\Store\\Credit\\Entity",
+            "attributes": {
+                "person": "${url.personId}",
+                "dateCreated": "${now}",
+                "credit": 0
             }
         }
     }
