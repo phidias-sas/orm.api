@@ -40,7 +40,7 @@ class Dispatcher
 
         /* Return a SINGLE element when fixed limit is set to 1 */
         if (isset($settings->collection->limit) && $settings->collection->limit == 1) {
-            return $collection->find()->first();
+            return $collection->find()->first()->fetchAll();
         }
 
         return $collection;
