@@ -90,17 +90,25 @@ class Dispatcher
             $methodData = $resource->$method;
             $functionName = $methodData->dispatcher;
 
-            $resourceRaw[$method] = function($query, $input, $request, $response) use ($functionName, $methodData, $matchedUrlArguments) {
+            $resourceRaw[$method] = [
+                "authorization" => function($authentication) {
+                    if (!$authentication) {
+                        return false;
+                    }
+                },
 
-                $settings = Dispatcher::parseWildcards($methodData->settings, [
-                    "now"   => time(),
-                    "url"   => $matchedUrlArguments,
-                    "query" => $query,
-                    "input" => $input
-                ], true);
+                "controller" => function($query, $input, $request, $response) use ($functionName, $methodData, $matchedUrlArguments) {
 
-                return Dispatcher::$functionName($settings, $query, $input, $request, $response);
-            };
+                    $settings = Dispatcher::parseWildcards($methodData->settings, [
+                        "now"   => time(),
+                        "url"   => $matchedUrlArguments,
+                        "query" => $query,
+                        "input" => $input
+                    ], true);
+
+                    return Dispatcher::$functionName($settings, $query, $input, $request, $response);
+                }
+            ];
         }
 
         return \Phidias\Api\Resource::factory($resourceRaw);
