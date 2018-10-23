@@ -132,6 +132,10 @@ class Dispatcher
             }
         }
 
+        if (isset($jsonQuery->single) && $jsonQuery->single == 1) {
+            $collection->hasOneElement();
+        }
+
         if (isset($jsonQuery->match)) {
             $collection->match($jsonQuery->match);
         }
