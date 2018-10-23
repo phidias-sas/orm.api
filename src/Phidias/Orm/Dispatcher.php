@@ -25,7 +25,6 @@ class Dispatcher
         /*
         Filter from query string
         */
-        // if ( isset($settings->allowStuffFromQuerystring )) {
         if (isset($query->limit)) {
             $collection->limit($query->limit);
         }
@@ -37,8 +36,12 @@ class Dispatcher
         if (isset($query->sort)) {
             $collection->orderBy($query->sort, isset($query->desc) ? $query->desc : null);
         }
-        // }
 
+
+        /* Return a SINGLE element when fixed limit is set to 1 */
+        if (isset($settings->collection->limit) && $settings->collection->limit == 1) {
+            return $collection->find()->first();
+        }
 
         return $collection;
     }
