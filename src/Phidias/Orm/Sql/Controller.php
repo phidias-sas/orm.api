@@ -1,4 +1,5 @@
 <?php
+
 namespace Phidias\Orm\Sql;
 
 class Controller
@@ -22,8 +23,7 @@ class Controller
             $schema->patch();
             return "Done :)";
         } catch (\Exception $e) {
-            return ["Error creating table", $e];
+            return ["Error creating table", $e->getMessage()];
         }
-
     }
 }
