@@ -1,2 +1,3 @@
 <?php
-\Phidias\Api\Server::registerResourceHandler(["Phidias\Orm\Dispatcher", "resourceHandler"]);
+// Completely disable this module
+//\Phidias\Api\Server::registerResourceHandler(["Phidias\Orm\Dispatcher", "resourceHandler"]);
